@@ -1,0 +1,100 @@
+<div class="row" *ngIf="adForm; else loading">
+  <div class="col-xs-12 col-sm-10 col-md-10 col-sm-offset-1 col-md-offset-2">
+    <form (ngSubmit)="onSubmit()" [formGroup]="adForm">
+      <div class="row">
+        <div class="col-xs-12">
+          <button type="submit"
+                  class="btn btn-success"
+                  [disabled]="!adForm.valid">Save</button>
+          <button type="button"
+                  class="btn btn-danger"
+                  (click)="onCancel()">Cancel</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="name">
+              Name of Product:
+            </label>
+            <input type="text"
+                   id="name"
+                   formControlName="title"
+                   class="form-control">
+            <span class="help-block"
+                  style="color: red;"
+                  *ngIf="!adForm.get('title').valid && adForm.get('title').touched">*Please enter product name</span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="imagePath">
+              Path of Image:
+            </label>
+            <input type="text"
+                   id="imagePath"
+                   formControlName="imagePath"
+                   class="form-control"
+                   #imagePath>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <img [src]="imagePath.value " class="img-responsive">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="desc">
+              Description:
+            </label>
+            <textarea id="desc"
+                      formControlName="description"
+                      class="form-control"
+                      rows="6">
+
+            </textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12" formArrayName="products">
+          <h4>Products:</h4>
+          <div class="row"
+               *ngFor="let product of adForm.get('products').controls; let i = index"
+               style="margin-top: 10px;"
+               [formGroupName]="i">
+            <div class="col-xs-7">
+              <input type="text"
+                     class="form-control"
+                     formControlName="productName">
+            </div>
+            <div class="col-xs-3">
+              <input type="number"
+                     class="form-control"
+                     formControlName="cost">
+            </div>
+            <div class="col-xs-2">
+              <button type="button"
+                      class="btn btn-danger"
+                      (click)="onDeleteProduct(i)"
+              >X</button>
+            </div>
+          </div>
+          <br>
+          <button type="button"
+                  class="btn btn-success"
+                  (click)="onAddProductToAd()">Add Product</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<ng-template #loading>
+  <h4>Loading...</h4>
+</ng-template>
+

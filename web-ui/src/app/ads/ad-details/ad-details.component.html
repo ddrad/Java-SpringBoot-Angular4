@@ -1,0 +1,55 @@
+<div *ngIf="ad; else loading">
+  <div class="row">
+    <div class="col-xs-12">
+      <img [src]="ad.imagePath" alt="{{ad.name}}" class="img-responsive" style="max-height: 300px;">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <h4>{{ad.title}} index:{{ad.index}}</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="btn-group" dropdown-toggle>
+        <button type="button" class="btn btn-primary dropdown-toggle">
+          Manage the Ad <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <!-- <li><a (click)="onAddToShopingList()" style="cursor: pointer">Add Product to Shopping List</a></li> -->
+          <li><a (click)="onProductEdit()" style="cursor: pointer">Edit Ad</a></li>
+          <li><a (click)="onDeleteAd()" style="cursor: pointer">Delete Ad</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <p>{{ad.description}}</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <h4>Master's Products:</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-7">
+      <ul class="list-group">
+        <li
+          class="list-group-item"
+          *ngFor="let product of ad.products; let i = index">
+          {{ product.productName }} - ${{ product.cost }} USD
+          <span class="pull-right">
+          <span class="btn btn-xs btn-success" (click)="onAddToShopingList(i)">
+             Add To Shop List
+          </span>
+        </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<ng-template #loading>
+  <h4>Loading...</h4>
+</ng-template>

@@ -1,0 +1,32 @@
+<div *ngIf="ads; else loading">
+  <div class="row">
+    <div class="col-xs-12">
+      <h4>Filters:</h4>
+      <label for="filterByName">Name:</label>
+      <input id="filterByName"
+             type="text"
+             [(ngModel)]="filteredTitle">
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-xs-12">
+      <button class="btn btn-success"
+              (click)="onAddNewProduct()">New Product
+      </button>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-xs-12">
+      <app-product-item
+        *ngFor="let adElement of ads | adFilter: filteredTitle: 'title'; let i = index"
+        [ad]="adElement"
+        [index]="i">
+      </app-product-item>
+    </div>
+  </div>
+</div>
+<ng-template #loading>
+  <h4>Loading...</h4>
+</ng-template>

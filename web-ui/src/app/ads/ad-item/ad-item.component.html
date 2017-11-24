@@ -1,0 +1,26 @@
+<a
+   [routerLink]="[ad.id, index]"
+   routerLinkActive="active"
+   class="list-group-item clearfix"
+   style="cursor: pointer">
+   <span class="pull-right">
+        <img [src]="ad.imagePath" alt="{{ad.title}}" class="img-responcive" style="max-height: 50px;">
+   </span>
+  <div class="pull-left">
+    <h4 class="list-group-item-heading">{{ad.title}} {{ad.index}}</h4>
+    <p class="list-group-item-text">{{ad.description}}</p>
+    <hr/>
+    <p class="list-group-item-text"
+       style="font-weight: bold; color:#337ab7"
+      *ngIf="ad.products && ad.products.length > 0; else costNotFound">
+      Cost: ${{ad.products[0].cost}} USD
+    </p>
+
+    <ng-template #costNotFound>
+    <p class="list-group-item-text"
+       style="font-weight: bold; color:#337ab7">
+      Cost not entered
+    </p>
+    </ng-template>
+  </div>
+</a>
