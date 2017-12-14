@@ -6,5 +6,5 @@ package com.azaroff.projects.craftsman.webapp.model.constant;
  */
 public enum LoginStatus {
 
-    ACTIVE, EXPIRED, NOT_FOUND, FAIL
+    ACTIVE, EXPIRED, NOT_FOUND, FAIL, SYSTEM_UNPREDICTABLE_ERROR
 }

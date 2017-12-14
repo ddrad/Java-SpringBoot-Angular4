@@ -1,5 +1,7 @@
 package com.azaroff.projects.craftsman.ad.service;
 
+import com.azaroff.projects.craftsman.exception.DAOException;
+
 import java.util.List;
 
 /**
@@ -9,15 +11,15 @@ import java.util.List;
 
 public interface AdService {
 
-    Ad saveAd(Ad ad);
+    Ad saveAd(String tokenAlias, Ad ad) throws DAOException;
 
     Ad findById(int id);
 
     Ad findById(String id);
 
-    List<AdInfo> findAllAds();
+    List<Ad> findAllAds();
 
-    List<AdInfo> findByAuthor(int authorId);
+    List<Ad> findByAuthor(String tokenAlias);
 
     void updateAd(Ad ad);
 

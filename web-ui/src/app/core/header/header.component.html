@@ -9,14 +9,14 @@
         <li routerLinkActive="active"><a routerLink="ads">Products</a></li>
         <li routerLinkActive="active"><a routerLink="shopping-list">Shopping List</a></li>
 
-        <ng-template [ngIf]="isAuthenticaredAsMaster()">
+        <ng-template [ngIf]="isAuthenticatedAsMaster()">
           <li routerLinkActive="active"><a routerLink="ads-own">My ads</a></li>
         </ng-template>
 
       </ul>
       <ul class="nav navbar-nav navbar-right">
 
-        <ng-template [ngIf]="!isAuthenticared()">
+        <ng-template [ngIf]="!isAuthenticated()">
           <li>
             <a routerLink="/sign-in">LogIn</a>
           </li>
@@ -26,7 +26,7 @@
         </ng-template>
 
         <li>
-          <a *ngIf="isAuthenticared()"
+          <a *ngIf="isAuthenticated()"
              style="cursor: pointer"
              (click)="onSignOut()">LogOut</a>
         </li>

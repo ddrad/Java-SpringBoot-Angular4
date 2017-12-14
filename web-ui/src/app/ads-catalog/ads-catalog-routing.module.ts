@@ -11,7 +11,6 @@ const adsCatalogRouts: Routes = [
     {path: '', component: AdStartComponent},
     {path: 'new', component: AdEditComponent},
     {path: ':id/:index', component: AdDetailsComponent},
-    {path: ':id/:index/edit', component: AdEditComponent},
   ]
   }
 ];

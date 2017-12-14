@@ -19,11 +19,21 @@ export class AdCatalogListComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.adService.fetchAdInfo();
+    /*
+     gets all items (ad[])
+      */
+    this.adService.fetchAllAds();
 
+    /*
+    listens to changes for subjectObject (adsChangedSbj - list of ad)
+     */
     this.subscribtion = this.adService.adsChangedSbj.subscribe((ads: Ad[]) => {
       this.ads = ads;
     });
+  }
+
+  isAuthenticatedAsMaster() {
+    return this.adService.isAuthenticatedAsMaster();
   }
 
   onAddNewProduct() {

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Http, Response} from '@angular/http';
+import {HttpClient} from '@angular/common/http';
 import {ShoppingListService} from '../shopping-list/shopping-list.service';
 import {Order} from '../common/model/order.model';
 import {Product} from '../common/model/product.model';
@@ -10,6 +10,7 @@ import {Observable} from 'rxjs/Observable';
 // import 'rxjs/add/operator/map';
 // import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
+import {AuthService} from '../auth/auth.service';
 
 @Injectable()
 export class AdService {
@@ -20,14 +21,14 @@ export class AdService {
   adSelectedSbj = new Subject<Ad>();
 
   constructor(private shoppingListService: ShoppingListService,
-              private http: Http, private httpService: HttpService) {
+              private httpClient: HttpClient, private httpService: HttpService,
+              private authService: AuthService) {
   }
 
   private adsInfo: Ad[] = [];
   private selectedAd: Ad;
 
   getAdsInfo() {
-    console.log('1 ', this.adsInfo);
     return this.adsInfo.slice();
   }
 
@@ -62,13 +63,12 @@ export class AdService {
     return this.defaultImageValue;
   }
 
-  fetchAdInfo() {
-    this.http.get('http://localhost:4200/app-ads/all')
+  fetchAllAds() {
+    this.httpClient.get<Ad[]>('http://localhost:4200/app-ads/all')
       .map(
-        (response: Response) => {
-          const ads: Ad[] = response.json();
+        (ads) => {
           for (const ad of ads) {
-            if (ad['products']) {
+            if (!ad['products']) {
               ad['products'] = [];
             }
           }
@@ -88,10 +88,9 @@ export class AdService {
   }
 
   fetchAdOwnInfo(tokenAlias: string) {
-    this.http.post('http://localhost:4200/app-ads/own', {tokenAlias})
+    this.httpClient.post<Ad[]>('http://localhost:4200/app-ads/own', {tokenAlias})
       .map(
-        (response: Response) => {
-          const ads: Ad[] = response.json();
+        (ads) => {
           for (const ad of ads) {
             if (ad['products']) {
               ad['products'] = [];
@@ -112,23 +111,22 @@ export class AdService {
       );
   }
 
+  fetchAdByIndex(index: number) {
+    let ad = this.adsInfo[index];
+    this.setSelectedAd(ad);
+    return ad;
+  }
 
   fetchAdById(id: number, index: number) {
-    return this.http.get('http://localhost:4200/app-ads/ad/' + id)
+    return this.httpClient.get<Ad>('http://localhost:4200/app-ads/ad/' + id)
       .map(
-        (response: Response) => {
-          return response.json();
+        (ad) => {
+          return ad;
         }
       )
       .catch(
         (error: Response) => {
           return Observable.throw('Can not get ad by ID ' + error);
-        }
-      )
-      .subscribe(
-        (ad: Ad) => {
-          ad.index = index;
-          this.setSelectedAd(ad);
         }
       );
   }
@@ -141,17 +139,14 @@ export class AdService {
 
   addNewAd(ad: Ad) {
     const options = this.httpService.getRequestOptions();
-
-    return this.http.post('http://localhost:4200/app-ads/add', ad, options)
+    const tokenAlias = this.authService.getTokenAlias();
+    return this.httpClient.post<Ad>('http://localhost:4200/app-ads/add', {tokenAlias, ad})
       .map(
-        (response: Response) => {
-          const ad: Ad = response.json();
-          console.log('in http response ', ad);
-          ad.index = this.getLengthAdInfo();
-          console.log('### ', ad.index);
-          this.addAdToAdsInfo(ad);
-          this.adSelectedSbj.next(ad);
-          return ad;
+        (result) => {
+          result.index = this.getLengthAdInfo();
+          this.addAdToAdsInfo(result);
+          this.adSelectedSbj.next(result);
+          return result;
         }
       )
       .catch(
@@ -164,7 +159,7 @@ export class AdService {
   updateAd(id: number, editedAd: Ad) {
     editedAd.id = id;
     const options = this.httpService.getRequestOptions();
-    this.http.put('http://localhost:4200/app-ads/update', editedAd, options)
+    this.httpClient.put('http://localhost:4200/app-ads/update', editedAd)
       .catch(
         (error: Response) => {
           return Observable.throw('Can not update ad ' + error);
@@ -181,5 +176,9 @@ export class AdService {
   deleteAd(index: number) {
     this.adsInfo.splice(index, 1);
     this.adsChangedSbj.next(this.adsInfo.slice());
+  }
+
+  isAuthenticatedAsMaster() {
+    return this.authService.isAuthenticatedAsMaster();
   }
 }

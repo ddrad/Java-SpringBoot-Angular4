@@ -19,7 +19,6 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.auth.isAuthenticared();
     this.orders = this.shoppingListService.getOrders();
 
     this.subscription = this.shoppingListService.orderChanged.subscribe(

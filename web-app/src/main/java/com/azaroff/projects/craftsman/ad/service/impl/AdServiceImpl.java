@@ -6,9 +6,15 @@ import com.azaroff.projects.craftsman.ad.service.Ad;
 import com.azaroff.projects.craftsman.ad.service.AdInfo;
 import com.azaroff.projects.craftsman.ad.service.AdService;
 import com.azaroff.projects.craftsman.ad.service.convert.AdConvert;
+import com.azaroff.projects.craftsman.customer.service.Customer;
+import com.azaroff.projects.craftsman.exception.DAOException;
+import com.azaroff.projects.craftsman.token.service.TokenData;
+import com.azaroff.projects.craftsman.token.service.TokenService;
+import com.azaroff.projects.craftsman.webapp.model.constant.LoginStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -27,10 +33,22 @@ public class AdServiceImpl implements AdService {
     @Autowired
     @Qualifier("adConvert")
     private AdConvert convert;
+    @Autowired
+    @Qualifier("tokenService")
+    private TokenService tokenService;
 
     @Override
-    @Transactional
-    public Ad saveAd(Ad ad) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Ad saveAd(String tokenAlias, Ad ad) throws DAOException {
+        TokenData tokenData = tokenService.findByAlias(tokenAlias);
+        if (tokenData == null) {
+            throw new DAOException(LoginStatus.FAIL, "Token data was not found");
+        }
+        if (tokenService.isExpiredTokenData(tokenData)) {
+            throw new DAOException(LoginStatus.EXPIRED, "Token was expired");
+        }
+        Customer customer = (Customer) tokenData.getData();
+        ad.setAuthor(customer.getId());
         AdEntity entity = repository.save(convert.toAdEntity(ad));
         return convert.toAd(entity);
     }
@@ -54,21 +72,28 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional
-    public List<AdInfo> findAllAds() {
+    public List<Ad> findAllAds() {
         Iterable<AdEntity> entities = repository.findAll();
-        List<AdInfo> ads = new ArrayList<AdInfo>();
+        List<Ad> ads = new ArrayList<>();
         for (AdEntity entity : entities) {
-            ads.add(convert.toAdInfo(entity));
+            ads.add(convert.toAd(entity));
         }
         return ads;
     }
 
     @Override
-    public List<AdInfo> findByAuthor(int authorId) {
-        Iterable<AdEntity> entities = repository.findByAuthor(authorId);
-        List<AdInfo> ads = new ArrayList<AdInfo>();
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<Ad> findByAuthor(String tokenAlias) throws DAOException {
+
+        TokenData tokenData = tokenService.findByAlias(tokenAlias);
+        if (null == tokenData) {
+            throw new DAOException(LoginStatus.FAIL, "Token data was not found");
+        }
+        Customer customer = (Customer) tokenData.getData();
+        Iterable<AdEntity> entities = repository.findByAuthor(customer.getId());
+        List<Ad> ads = new ArrayList<>();
         for (AdEntity entity : entities) {
-            ads.add(convert.toAdInfo(entity));
+            ads.add(convert.toAd(entity));
         }
         return ads;
     }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Http, Response, Headers} from '@angular/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -10,13 +10,13 @@ import {TokenData} from './token-data.model';
 @Injectable()
 export class AuthService {
 
-  constructor(private http: Http) {
+  constructor(private httpClient: HttpClient) {
   }
 
   isLogIn = false;
   tokenData: TokenData = null;
 
-  isAuthenticared() {
+  isAuthenticated() {
     if (this.tokenData) {
       this.isLogIn = true;
     }
@@ -30,8 +30,8 @@ export class AuthService {
     return this.isLogIn;
   }
 
-  isAuthenticaredAsMaster() {
-    if (this.isAuthenticared() && this.tokenData.customerType === 'MASTER') {
+  isAuthenticatedAsMaster() {
+    if (this.isAuthenticated() && this.tokenData.customerType === 'MASTER') {
       return true;
     }
   }
@@ -41,21 +41,21 @@ export class AuthService {
       return this.tokenData.token;
     }
 
-    if ( this.isAuthenticared()) {
+    if ( this.isAuthenticated()) {
       return this.tokenData.token;
     }
   }
 
   signIn(email: string, password: string) {
-    this.http.post('http://localhost:4200/app-auth/sign-in', {email, password})
+    this.httpClient.post<TokenData>('http://localhost:4200/app-auth/sign-in', {email, password})
       .catch(
         (error: Response) => {
           return Observable.throw('error in Sign-In() ' + error);
         }
       )
       .subscribe(
-        (response: Response) => {
-          this.tokenData = response.json();
+        (tokenData) => {
+          this.tokenData = tokenData;
           if (this.tokenData.status === 'ACTIVE') {
             localStorage.setItem('crafterTokenData', JSON.stringify(this.tokenData));
             this.isLogIn = true;
@@ -67,14 +67,14 @@ export class AuthService {
   signUp(registerData: RegisterData) {
     const headers = new Headers({'Content-Type': 'application/json'});
 
-    this.http.post('http://localhost:4200/app-auth/sign-up', registerData)
+    this.httpClient.post<TokenData>('http://localhost:4200/app-auth/sign-up', registerData)
       .catch(
         (error: Response) => {
           return Observable.throw('error in Sign-In() ' + error);
         }
       ).subscribe(
-      (response: Response) => {
-        this.tokenData = response.json();
+      (tokenData) => {
+        this.tokenData = tokenData;
         if (this.tokenData.status === 'ACTIVE') {
           localStorage.setItem('crafterTokenData', JSON.stringify(this.tokenData));
           this.isLogIn = true;

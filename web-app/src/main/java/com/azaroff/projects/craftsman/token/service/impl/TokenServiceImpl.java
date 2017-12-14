@@ -80,7 +80,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.MANDATORY)
     public TokenData findByAlias(String alias) {
         TokenDataEntity tokenDataEntity = tokenRepository.findByAlias(alias);
         if (tokenDataEntity == null) {

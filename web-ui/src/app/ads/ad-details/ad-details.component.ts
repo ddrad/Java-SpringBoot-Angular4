@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Params, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Params, Router} from '@angular/router';
 
 import {Ad} from '../ad.model';
 import {AdService} from '../ad.service';
@@ -15,25 +15,27 @@ export class AdDetailsComponent implements OnInit, OnDestroy {
   id: number;
   index: number;
   subscribtion: Subscription;
+  isFromOwnAdsPage: boolean;
 
   constructor(private adService: AdService,
               private route: ActivatedRoute,
-              private router: Router) { }
+              private router: Router) {
+  }
 
   ngOnInit() {
-    this.route.params.subscribe(
+    this.subscribtion = this.route.params.subscribe(
       (params: Params) => {
         this.id = +params['id'];
         this.index = +params['index'];
-        this.adService.fetchAdById(this.id, this.index);
+        this.ad = this.adService.fetchAdByIndex(this.index);
       }
     );
 
-    this.subscribtion = this.adService.adSelectedSbj.subscribe(
-      (ad: Ad) => {
-        this.ad = ad;
-      }
-    );
+    // this.subscribtion = this.adService.adSelectedSbj.subscribe(
+    //   (ad: Ad) => {
+    //     this.ad = ad;
+    //   }
+    // );
   }
 
   onAddToShopingList(index: number) {

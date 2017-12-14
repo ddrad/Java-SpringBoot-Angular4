@@ -1,17 +1,16 @@
 package com.azaroff.projects.craftsman.webapp.controller;
 
 import com.azaroff.projects.craftsman.ad.service.Ad;
-import com.azaroff.projects.craftsman.ad.service.AdInfo;
 import com.azaroff.projects.craftsman.ad.service.AdService;
-import com.azaroff.projects.craftsman.customer.service.Customer;
-import com.azaroff.projects.craftsman.token.service.TokenData;
-import com.azaroff.projects.craftsman.token.service.TokenService;
+import com.azaroff.projects.craftsman.exception.ControllerException;
+import com.azaroff.projects.craftsman.exception.DAOException;
+import com.azaroff.projects.craftsman.webapp.model.NewAdRequest;
+import com.azaroff.projects.craftsman.webapp.model.constant.LoginStatus;
 import com.azaroff.projects.craftsman.webapp.model.permission.BaseRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,41 +27,53 @@ public class AdsController {
     @Autowired
     @Qualifier("adService")
     private AdService adService;
-    @Autowired
-    @Qualifier("tokenService")
-    private TokenService tokenService;
 
     @RequestMapping("/all")
-    public String getAllAds() throws JsonProcessingException {
-        List<AdInfo> allAds = adService.findAllAds();
-        return new ObjectMapper().writeValueAsString(allAds);
+    public String getAllAds() {
+        try {
+            List<Ad> allAds = adService.findAllAds();
+            return new ObjectMapper().writeValueAsString(allAds);
+        } catch (JsonProcessingException e) {
+            throw new ControllerException(LoginStatus.SYSTEM_UNPREDICTABLE_ERROR, e.getMessage());
+        }
     }
 
     @RequestMapping("/own")
-    public String getOwnAds(@RequestBody BaseRequest request) throws JsonProcessingException {
-        TokenData tokenData = tokenService.findByAlias(request.getTokenAlias());
-        if(null == tokenData) {
-
+    public String getOwnAds(@RequestBody BaseRequest request) {
+        try {
+            List<Ad> allAds = adService.findByAuthor(request.getTokenAlias());
+            return new ObjectMapper().writeValueAsString(allAds);
+        } catch (JsonProcessingException e) {
+            throw new ControllerException(LoginStatus.SYSTEM_UNPREDICTABLE_ERROR, e.getMessage());
         }
-        Customer customer = (Customer) tokenData.getData();
-        List<AdInfo> allAds = adService.findByAuthor(customer.getId());
-        return new ObjectMapper().writeValueAsString(allAds);
     }
 
     @RequestMapping(value = "/ad/{id}", method = RequestMethod.GET)
-    public String fetchAdById(@PathVariable("id") int id) throws JsonProcessingException {
-        Ad ad = adService.findById(id);
-        return new ObjectMapper().writeValueAsString(ad);
+    public String fetchAdById(@PathVariable("id") int id) {
+        try {
+            Ad ad = adService.findById(id);
+            return new ObjectMapper().writeValueAsString(ad);
+        } catch (JsonProcessingException e) {
+            throw new ControllerException(LoginStatus.SYSTEM_UNPREDICTABLE_ERROR, e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String add(@RequestBody Ad ad) throws JsonProcessingException  {
-        Ad savedAd = adService.saveAd(ad);
-        return new ObjectMapper().writeValueAsString(savedAd);
+    public String add(@RequestBody NewAdRequest newAdRequest) {
+        String tokenAlias = newAdRequest.getTokenAlias();
+        try {
+            Ad ad = newAdRequest.getAd();
+            Ad savedAd = adService.saveAd(tokenAlias, ad);
+            return new ObjectMapper().writeValueAsString(savedAd);
+        } catch (DAOException e) {
+            throw new DAOException(e.getStatus(), e.getMessage());
+        } catch (JsonProcessingException e) {
+            throw new ControllerException(e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
     public void update(@RequestBody Ad ad) {
-        adService.saveAd(ad);
+        //adService.saveAd(ad);
     }
 }

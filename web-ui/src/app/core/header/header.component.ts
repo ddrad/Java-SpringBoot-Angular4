@@ -17,13 +17,12 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
   }
 
-  isAuthenticared() {
-    return this.authService.isAuthenticared();
+  isAuthenticated() {
+    return this.authService.isAuthenticated();
   }
 
-  isAuthenticaredAsMaster() {
-    console.log('it is isAuthAsMaster in the header');
-    return this.authService.isAuthenticaredAsMaster();
+  isAuthenticatedAsMaster() {
+    return this.authService.isAuthenticatedAsMaster();
   }
 
   onSignOut() {

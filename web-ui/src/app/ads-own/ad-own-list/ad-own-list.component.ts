@@ -21,8 +21,14 @@ export class AdOwnListComponent implements OnInit, OnDestroy {
               private authService: AuthService) { }
 
   ngOnInit() {
+    /*
+    gets all own ads bt token
+   */
     this.adService.fetchAdOwnInfo(this.authService.getTokenAlias());
 
+    /*
+    listens to subjectObject (adsChangedSbj - list of ad)
+    */
     this.subscribtion = this.adService.adsChangedSbj.subscribe((ads: Ad[]) => {
       this.ads = ads;
     });
