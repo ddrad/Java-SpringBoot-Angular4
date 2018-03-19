@@ -49,7 +49,6 @@ public class AuthController {
     @RequestMapping(value = "/sign-in", method = POST, consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public String signIn(@RequestBody LoginRequest request) throws JsonProcessingException {
-        LoginResponse response = new LoginResponse();
         Authorization authData = authorizationService.findByAuthData(request.getEmail(), request.getPassword());
 
         if (authData == null) {

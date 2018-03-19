@@ -1,4 +1,3 @@
-
 CREATE TABLE customer (
   id SERIAL PRIMARY KEY
   ,first_name VARCHAR (100)
@@ -11,8 +10,8 @@ CREATE TABLE ad (
   id SERIAL PRIMARY KEY
   ,title VARCHAR (100)
   ,description VARCHAR (2000)
-  ,imagePath VARCHAR (100)
-  ,author VARCHAR (100)
+  ,image_path VARCHAR (100)
+  ,author int (100)
 );
 
 CREATE TABLE product (
