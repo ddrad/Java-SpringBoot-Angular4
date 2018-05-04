@@ -10,6 +10,7 @@ public class LoginResponse {
     private LoginStatus status;
     private String token;
     private CustomerType customerType;
+    private Object data;
     private String message;
 
 
@@ -43,5 +44,13 @@ public class LoginResponse {
 
     public void setCustomerType(CustomerType customerType) {
         this.customerType = customerType;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
     }
 }

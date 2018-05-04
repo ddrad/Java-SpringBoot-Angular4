@@ -87,8 +87,9 @@ export class AdService {
       );
   }
 
-  fetchAdOwnInfo(tokenAlias: string) {
-    this.httpClient.post<Ad[]>('http://localhost:4200/app-ads/own', {tokenAlias})
+  fetchAdOwnInfo(tokenAlias: string, data) {
+    console.log('fetchAdOwnInfo: ', data);
+    this.httpClient.post<Ad[]>('http://localhost:4200/app-ads/own', {tokenAlias, data})
       .map(
         (ads) => {
           for (const ad of ads) {

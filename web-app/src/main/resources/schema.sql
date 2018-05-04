@@ -24,7 +24,7 @@ CREATE TABLE product (
      REFERENCES ad (id)
 );
 
-CREATE TABLE auth (
+CREATE TABLE authorization_data (
   id SERIAL PRIMARY KEY
   ,email VARCHAR (100)
   ,password VARCHAR (100)

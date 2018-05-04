@@ -7,12 +7,14 @@ import com.azaroff.projects.craftsman.exception.DAOException;
 import com.azaroff.projects.craftsman.webapp.model.NewAdRequest;
 import com.azaroff.projects.craftsman.webapp.model.constant.LoginStatus;
 import com.azaroff.projects.craftsman.webapp.model.permission.BaseRequest;
+import com.azaroff.projects.craftsman.webapp.model.permission.Request;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
 import java.util.List;
 
 
@@ -39,9 +41,9 @@ public class AdsController {
     }
 
     @RequestMapping("/own")
-    public String getOwnAds(@RequestBody BaseRequest request) {
+    public String getOwnAds(@RequestBody Request request) {
         try {
-            List<Ad> allAds = adService.findByAuthor(request.getTokenAlias());
+            List<Ad> allAds = adService.findByAuthor(request.getTokenAlias(), Base64.getDecoder().decode(request.getData()));
             return new ObjectMapper().writeValueAsString(allAds);
         } catch (JsonProcessingException e) {
             throw new ControllerException(LoginStatus.SYSTEM_UNPREDICTABLE_ERROR, e.getMessage());

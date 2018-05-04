@@ -2,6 +2,7 @@ package com.azaroff.projects.craftsman.token.service.impl;
 
 import com.azaroff.projects.craftsman.token.datalayer.dao.TokenRepository;
 import com.azaroff.projects.craftsman.token.datalayer.entity.TokenDataEntity;
+import com.azaroff.projects.craftsman.token.service.DesirializeWrapper;
 import com.azaroff.projects.craftsman.token.service.TokenData;
 import com.azaroff.projects.craftsman.token.service.TokenDataStatus;
 import com.azaroff.projects.craftsman.token.service.TokenService;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -36,19 +38,21 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     @Transactional
-    public TokenData generateToken(String alias, Object data, DateTime dt, boolean removeAfterExpiration) {
-        if (StringUtils.isEmpty(alias)) {
+    public TokenData generateToken(Object data, DateTime dt, boolean removeAfterExpiration, String... aliasData) {
+        if (StringUtils.isEmpty(aliasData)) {
             throw new RuntimeException(Error.ALIAS_IS_NULL.name());
         }
-        TokenDataEntity tokenDataEntity = tokenRepository.findByAlias(alias);
+        // generate unique tokenAlias and encode to base64
+        byte[] tokenAlias = tokenDataConverter.generateTokenAlias(aliasData);
+        String strTokenAlias = Base64.getEncoder().encodeToString(tokenAlias);
+        //Finf token data by this token
+        TokenDataEntity tokenDataEntity = tokenRepository.findByAlias(strTokenAlias);
 
         if (tokenDataEntity != null) {
-            TokenDataEntity entity =
-                    tokenRepository.save(updateParamsAndExpirationTime(tokenDataEntity, data, dt));
+            TokenDataEntity entity = tokenRepository.save(updateParamsAndExpirationTime(tokenDataEntity, data, dt));
             return tokenDataConverter.convertFromEntity(entity);
         } else {
-            TokenDataEntity entity = tokenRepository
-                    .save(createTokenDataEntity(alias, data, dt, removeAfterExpiration));
+            TokenDataEntity entity = tokenRepository.save(createTokenDataEntity(strTokenAlias, data, dt, removeAfterExpiration));
             return tokenDataConverter.convertFromEntity(entity);
         }
     }
@@ -138,5 +142,10 @@ public class TokenServiceImpl implements TokenService {
     public boolean isExpiredTokenData(TokenData tokenData) {
         DateTime expirationTime = tokenData.getExpirationTime();
         return expirationTime.isBeforeNow();
+    }
+
+    @Override
+    public DesirializeWrapper deserialize(byte[] data) {
+        return () -> serializer.deserialize(data);
     }
 }

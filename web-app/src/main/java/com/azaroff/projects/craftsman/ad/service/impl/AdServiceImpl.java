@@ -3,7 +3,6 @@ package com.azaroff.projects.craftsman.ad.service.impl;
 import com.azaroff.projects.craftsman.ad.datalayer.dao.AdRepository;
 import com.azaroff.projects.craftsman.ad.datalayer.entity.AdEntity;
 import com.azaroff.projects.craftsman.ad.service.Ad;
-import com.azaroff.projects.craftsman.ad.service.AdInfo;
 import com.azaroff.projects.craftsman.ad.service.AdService;
 import com.azaroff.projects.craftsman.ad.service.convert.AdConvert;
 import com.azaroff.projects.craftsman.customer.service.Customer;
@@ -18,8 +17,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by AzarovD on 25.08.2016.
@@ -83,19 +87,12 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<Ad> findByAuthor(String tokenAlias) throws DAOException {
-
-        TokenData tokenData = tokenService.findByAlias(tokenAlias);
-        if (null == tokenData) {
-            throw new DAOException(LoginStatus.FAIL, "Token data was not found");
-        }
-        Customer customer = (Customer) tokenData.getData();
+    public List<Ad> findByAuthor(String tokenAlias, byte[] tokenData) throws DAOException {
+        //TODO: must verify token data
+        Customer customer = (Customer) tokenService.deserialize(tokenData).getDesirializedObject();
         Iterable<AdEntity> entities = repository.findByAuthor(customer.getId());
-        List<Ad> ads = new ArrayList<>();
-        for (AdEntity entity : entities) {
-            ads.add(convert.toAd(entity));
-        }
-        return ads;
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map((d)-> convert.toAd(d)).collect(Collectors.toList());
     }
 
     @Override

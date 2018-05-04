@@ -24,7 +24,7 @@ export class AdOwnListComponent implements OnInit, OnDestroy {
     /*
     gets all own ads bt token
    */
-    this.adService.fetchAdOwnInfo(this.authService.getTokenAlias());
+    this.adService.fetchAdOwnInfo(this.authService.getTokenAlias(), this.authService.getTokenData());
 
     /*
     listens to subjectObject (adsChangedSbj - list of ad)

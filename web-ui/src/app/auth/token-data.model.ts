@@ -3,12 +3,14 @@ export class TokenData {
   public status: string;
   public customerType: string;
   public message: string;
+  public data;
 
 
-  constructor(token: string, status: string, customerType: string, message: string) {
+  constructor(token: string, status: string, customerType: string, data, message: string) {
     this.token = token;
     this.status = status;
     this.customerType = customerType;
+    this.data = data;
     this.message = message;
   }
 

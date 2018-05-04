@@ -46,6 +46,16 @@ export class AuthService {
     }
   }
 
+  getTokenData() {
+    if ( this.tokenData ) {
+      return this.tokenData.data;
+    }
+
+    if ( this.isAuthenticated()) {
+      return this.tokenData.data;
+    }
+  }
+
   signIn(email: string, password: string) {
     this.httpClient.post<TokenData>('http://localhost:4200/app-auth/sign-in', {email, password})
       .catch(
@@ -55,6 +65,7 @@ export class AuthService {
       )
       .subscribe(
         (tokenData) => {
+          console.log(tokenData);
           this.tokenData = tokenData;
           if (this.tokenData.status === 'ACTIVE') {
             localStorage.setItem('crafterTokenData', JSON.stringify(this.tokenData));

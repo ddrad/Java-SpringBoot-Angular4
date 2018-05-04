@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +36,16 @@ public class TokenDataConverter {
     }
 
     public TokenData convertFromEntity(TokenDataEntity entity) {
+        return convertFromEntity(entity, false);
+    }
+
+    public TokenData convertFromEntity(TokenDataEntity entity, boolean deserialize) {
+        TokenData tokenData = commonConvertFromEntity(entity);
+        tokenData.setData(deserialize ? serializer.deserialize(entity.getData()) : entity.getData());
+        return tokenData;
+    }
+
+    private TokenData commonConvertFromEntity(TokenDataEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -43,7 +54,6 @@ public class TokenDataConverter {
         tokenData.setAlias(entity.getAlias());
         tokenData.setStatus(entity.getStatus());
         tokenData.setExpirationTime(new DateTime(entity.getExpirationTime()));
-        tokenData.setData(serializer.deserialize(entity.getData()));
         tokenData.setRemoveAfterExpiration(entity.isRemoveAfterExpiration());
         return tokenData;
     }
@@ -73,5 +83,9 @@ public class TokenDataConverter {
         entity.setExpirationTime(tokenData.getExpirationTime().toDate());
         entity.setRemoveAfterExpiration(tokenData.isRemoveAfterExpiration());
         entity.setStatus(tokenData.getStatus());
+    }
+
+    public byte[] generateTokenAlias(String... values) {
+        return serializer.serialize(values);
     }
 }

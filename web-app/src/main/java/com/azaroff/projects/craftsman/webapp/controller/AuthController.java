@@ -52,14 +52,14 @@ public class AuthController {
         Authorization authData = authorizationService.findByAuthData(request.getEmail(), request.getPassword());
 
         if (authData == null) {
-            return buildResponse(LoginStatus.NOT_FOUND, null, null, "User Not Found");
+            return buildResponse(LoginStatus.NOT_FOUND, null, null, null, "User Not Found");
         }
 
         Customer customer = customerService.findById(authData.getCustomerId());
 
-        TokenData tokenData = tokenService.generateToken(UUID.nameUUIDFromBytes(request.getEmail().getBytes()).
-                toString(), customer, new DateTime(), true);
-        return buildResponse(LoginStatus.ACTIVE, tokenData.getAlias(), customer.getType(), "");
+        TokenData tokenData = tokenService.generateToken(customer, new DateTime(), true,
+                customer.getType().name(), authData.getLogin());
+        return buildResponse(LoginStatus.ACTIVE, tokenData.getAlias(), customer.getType(), tokenData.getData(), "");
     }
 
     @RequestMapping(value = "/sign-up", method = POST, consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -78,10 +78,9 @@ public class AuthController {
         authorization.setPassword(request.getPassword());
         Authorization authorizationData = authorizationService.addAuthorizationData(authorization);
 
-        TokenData tokenData = tokenService.generateToken(UUID.nameUUIDFromBytes(request.getEmail().getBytes()).
-                toString(), createdCustomer, new DateTime(), true);
+        TokenData tokenData = tokenService.generateToken(createdCustomer, new DateTime(), true);
 
-        return buildResponse(LoginStatus.ACTIVE, tokenData.getAlias(), createdCustomer.getType(), "");
+        return buildResponse(LoginStatus.ACTIVE, tokenData.getAlias(), createdCustomer.getType(), tokenData.getData(), "");
     }
 
     @RequestMapping(value = "/get-customer-id", method = POST, consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -94,12 +93,13 @@ public class AuthController {
 
     }
 
-    private String buildResponse(LoginStatus status, String alias, CustomerType customerType, String message) throws JsonProcessingException {
+    private String buildResponse(LoginStatus status, String alias, CustomerType customerType, Object data, String message) throws JsonProcessingException {
         LoginResponse response = new LoginResponse();
         response.setStatus(status);
         response.setToken(alias);
         response.setMessage(message);
         response.setCustomerType(customerType);
+        response.setData(data);
         return new ObjectMapper().writeValueAsString(response);
     }
 }

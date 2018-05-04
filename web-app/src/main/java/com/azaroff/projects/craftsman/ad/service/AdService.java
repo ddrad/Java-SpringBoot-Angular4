@@ -19,7 +19,7 @@ public interface AdService {
 
     List<Ad> findAllAds();
 
-    List<Ad> findByAuthor(String tokenAlias);
+    List<Ad> findByAuthor(String tokenAlias, byte[] data);
 
     void updateAd(Ad ad);
 
