@@ -51,7 +51,7 @@ public class AdServiceImpl implements AdService {
         if (tokenService.isExpiredTokenData(tokenData)) {
             throw new DAOException(LoginStatus.EXPIRED, "Token was expired");
         }
-        Customer customer = (Customer) tokenData.getData();
+        Customer customer = (Customer)tokenService.deserialize((byte[])tokenData.getData()).getDesirializedObject();
         ad.setAuthor(customer.getId());
         AdEntity entity = repository.save(convert.toAdEntity(ad));
         return convert.toAd(entity);

@@ -4,6 +4,8 @@ import com.azaroff.projects.craftsman.customer.service.Customer;
 import com.azaroff.projects.craftsman.customer.datalayer.entity.CustomerEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
+
 /**
  * Created by AzarovD on 25.08.2016.
  */
@@ -28,6 +30,7 @@ public class CustomerConvert {
         customer.setLastName(entity.getLastName());
         customer.setMiddleName(entity.getMiddleName());
         customer.setType(entity.getType());
+        customer.setOwnAds(entity.getAds().stream().map(i -> i.getId()).collect(Collectors.toList()));
         return customer;
     }
 }

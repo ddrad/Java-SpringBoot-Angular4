@@ -19,4 +19,6 @@ public interface CustomerService {
 
     void updateCustomer(Customer customer);
 
-}
+    public boolean checkOwnerForAd(int id, byte[] data);
+
+    }

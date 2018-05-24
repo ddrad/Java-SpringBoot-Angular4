@@ -1,4 +1,4 @@
-package annotation;
+package com.azaroff.projects.craftsman.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

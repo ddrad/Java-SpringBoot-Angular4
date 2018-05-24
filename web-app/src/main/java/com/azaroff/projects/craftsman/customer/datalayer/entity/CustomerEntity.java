@@ -4,12 +4,15 @@ package com.azaroff.projects.craftsman.customer.datalayer.entity;
  * Created by AzarovD on 25.08.2016.
  */
 
+import com.azaroff.projects.craftsman.ad.datalayer.entity.AdEntity;
+import com.azaroff.projects.craftsman.ad.service.Ad;
 import com.azaroff.projects.craftsman.customer.service.constant.CustomerType;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "customer")
@@ -34,6 +37,10 @@ public class CustomerEntity {
     @Column(name="type", nullable = false)
     @Enumerated(EnumType.STRING)
     private CustomerType type;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "author", referencedColumnName = "id")
+    private Set<AdEntity> ads;
 
     public int getId() {
         return id;
@@ -73,5 +80,13 @@ public class CustomerEntity {
 
     public void setType(CustomerType type) {
         this.type = type;
+    }
+
+    public Set<AdEntity> getAds() {
+        return ads;
+    }
+
+    public void setAds(Set<AdEntity> ads) {
+        this.ads = ads;
     }
 }

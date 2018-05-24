@@ -1,9 +1,9 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Params, Router} from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 
-import {Ad} from '../ad.model';
-import {AdService} from '../ad.service';
-import {Subscription} from 'rxjs/Subscription';
+import { Ad } from '../ad.model';
+import { AdService } from '../ad.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-ad-details',
@@ -18,8 +18,8 @@ export class AdDetailsComponent implements OnInit, OnDestroy {
   isFromOwnAdsPage: boolean;
 
   constructor(private adService: AdService,
-              private route: ActivatedRoute,
-              private router: Router) {
+    private route: ActivatedRoute,
+    private router: Router) {
   }
 
   ngOnInit() {
@@ -39,11 +39,29 @@ export class AdDetailsComponent implements OnInit, OnDestroy {
   }
 
   onAddToShopingList(index: number) {
+    if (!this.adService.isAuthenticated()) {
+      this.router.navigate(['confirm-order']);
+    }
     this.adService.addAdToShoppingList(this.ad.products[index]);
   }
 
+  isAuthenticatedAsMaster() {
+    let isOwner = false;
+    let isMaster = this.adService.isAuthenticatedAsMaster();
+    if (isMaster) {
+      this.adService.isCustomerIsOwnerAd(this.ad.id)
+        .subscribe(
+          (r: boolean) => {
+            console.log('in subscribe ', r);
+            isOwner = r
+          }
+        );
+    }
+    return isMaster && isOwner ? true : false;
+  }
+
   onProductEdit() {
-    this.router.navigate(['edit'], {relativeTo: this.route});
+    this.router.navigate(['edit'], { relativeTo: this.route });
   }
 
   onDeleteAd() {

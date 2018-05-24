@@ -5,6 +5,7 @@ import com.azaroff.projects.craftsman.customer.datalayer.entity.CustomerEntity;
 import com.azaroff.projects.craftsman.customer.service.Customer;
 import com.azaroff.projects.craftsman.customer.service.CustomerService;
 import com.azaroff.projects.craftsman.customer.service.convert.CustomerConvert;
+import com.azaroff.projects.craftsman.token.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Created by AzarovD on 25.08.2016.
@@ -26,6 +29,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     @Qualifier("customerConvert")
     private CustomerConvert convert;
+    @Autowired
+    private TokenService tokenService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
@@ -70,6 +75,12 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     public void updateCustomer(Customer customer) {
        
+    }
+
+    @Override
+    public boolean checkOwnerForAd(int id, byte[] data) {
+        Customer customer = (Customer) tokenService.deserialize(data).getDesirializedObject();
+        return customer.getOwnAds().contains(id);
     }
 
 }

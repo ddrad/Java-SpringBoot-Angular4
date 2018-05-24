@@ -2,6 +2,8 @@ package com.azaroff.projects.craftsman.customer.service;
 
 import com.azaroff.projects.craftsman.customer.service.constant.CustomerType;
 
+import java.util.List;
+
 /**
  * Created by AzarovD on 25.08.2016.
  */
@@ -13,6 +15,7 @@ public class Customer {
     private String lastName;
     private String middleName;
     public CustomerType type;
+    private List<Integer> ownAds;
 
     public int getId() {
         return id;
@@ -52,6 +55,14 @@ public class Customer {
 
     public void setType(CustomerType type) {
         this.type = type;
+    }
+
+    public List<Integer> getOwnAds() {
+        return ownAds;
+    }
+
+    public void setOwnAds(List<Integer> ownAds) {
+        this.ownAds = ownAds;
     }
 
     @Override

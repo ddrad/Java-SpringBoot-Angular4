@@ -1,16 +1,18 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {ShoppingListService} from '../shopping-list/shopping-list.service';
-import {Order} from '../common/model/order.model';
-import {Product} from '../common/model/product.model';
-import {HttpService} from '../common/services/http.service';
-import {Ad} from './ad.model';
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { ShoppingListService } from '../shopping-list/shopping-list.service';
+import { Order } from '../common/model/order.model';
+import { Product } from '../common/model/product.model';
+import { HttpService } from '../common/services/http.service';
+import { Ad } from './ad.model';
+import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
 // import 'rxjs/add/operator/map';
 // import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
-import {AuthService} from '../auth/auth.service';
+import { AuthService } from '../auth/auth.service';
+import { Router } from "@angular/router";
+import { RequestOptions } from '@angular/http';
 
 @Injectable()
 export class AdService {
@@ -21,8 +23,8 @@ export class AdService {
   adSelectedSbj = new Subject<Ad>();
 
   constructor(private shoppingListService: ShoppingListService,
-              private httpClient: HttpClient, private httpService: HttpService,
-              private authService: AuthService) {
+    private httpClient: HttpClient, private httpService: HttpService,
+    private authService: AuthService, private router: Router) {
   }
 
   private adsInfo: Ad[] = [];
@@ -89,7 +91,7 @@ export class AdService {
 
   fetchAdOwnInfo(tokenAlias: string, data) {
     console.log('fetchAdOwnInfo: ', data);
-    this.httpClient.post<Ad[]>('http://localhost:4200/app-ads/own', {tokenAlias, data})
+    this.httpClient.post<Ad[]>('http://localhost:4200/app-ads/own', { tokenAlias, data })
       .map(
         (ads) => {
           for (const ad of ads) {
@@ -102,6 +104,7 @@ export class AdService {
       )
       .catch(
         (error: Response) => {
+          this.router.navigate(['sign-in']);
           return Observable.throw('error in getAdsInfo()' + error);
         }
       )
@@ -141,7 +144,7 @@ export class AdService {
   addNewAd(ad: Ad) {
     const options = this.httpService.getRequestOptions();
     const tokenAlias = this.authService.getTokenAlias();
-    return this.httpClient.post<Ad>('http://localhost:4200/app-ads/add', {tokenAlias, ad})
+    return this.httpClient.post<Ad>('http://localhost:4200/app-ads/add', { tokenAlias, ad })
       .map(
         (result) => {
           result.index = this.getLengthAdInfo();
@@ -181,5 +184,33 @@ export class AdService {
 
   isAuthenticatedAsMaster() {
     return this.authService.isAuthenticatedAsMaster();
+  }
+
+  isAuthenticated() {
+    return this.authService.isAuthenticated();
+  }
+
+  isCustomerIsOwnerAd(id: number) {
+    console.log('in here');
+    let result = false;
+    let tokenAlias = this.getTokenAlias();
+    let data = this.getTokenData();
+    return this.httpClient.put<boolean>('http://localhost:4200/app-ads/checkOwner/' + id, { tokenAlias, data })
+      .catch(
+        (error: Response) => {
+          return Observable.throw('Can not find ad ' + error);
+        }
+      ).map(r => { 
+        result = r; 
+        return result; 
+      });
+  }
+
+  private getTokenData() {
+    return this.authService.getTokenData();
+  }
+
+  private getTokenAlias() {
+    return this.authService.getTokenAlias();
   }
 }

@@ -1,15 +1,17 @@
 package com.azaroff.projects.craftsman.webapp.controller;
 
+import com.azaroff.projects.craftsman.annotation.AppRequaredToken;
 import com.azaroff.projects.craftsman.ad.service.Ad;
 import com.azaroff.projects.craftsman.ad.service.AdService;
+import com.azaroff.projects.craftsman.customer.service.CustomerService;
 import com.azaroff.projects.craftsman.exception.ControllerException;
 import com.azaroff.projects.craftsman.exception.DAOException;
 import com.azaroff.projects.craftsman.webapp.model.NewAdRequest;
 import com.azaroff.projects.craftsman.webapp.model.constant.LoginStatus;
-import com.azaroff.projects.craftsman.webapp.model.permission.BaseRequest;
 import com.azaroff.projects.craftsman.webapp.model.permission.Request;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import exception.TokenIsExpiredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +31,8 @@ public class AdsController {
     @Autowired
     @Qualifier("adService")
     private AdService adService;
+    @Autowired
+    private CustomerService customerService;
 
     @RequestMapping("/all")
     public String getAllAds() {
@@ -41,7 +45,8 @@ public class AdsController {
     }
 
     @RequestMapping("/own")
-    public String getOwnAds(@RequestBody Request request) {
+    @AppRequaredToken()
+    public String getOwnAds(@RequestBody Request request) throws TokenIsExpiredException {
         try {
             List<Ad> allAds = adService.findByAuthor(request.getTokenAlias(), Base64.getDecoder().decode(request.getData()));
             return new ObjectMapper().writeValueAsString(allAds);
@@ -77,5 +82,12 @@ public class AdsController {
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
     public void update(@RequestBody Ad ad) {
         //adService.saveAd(ad);
+    }
+
+    @RequestMapping(value = "/checkOwner/{id}", method = RequestMethod.PUT)
+    public String checkOwner(@PathVariable("id") int id, @RequestBody Request request) throws JsonProcessingException {
+        String tokenAlias = request.getTokenAlias();
+        byte[] data = Base64.getDecoder().decode(request.getData());
+        return new ObjectMapper().writeValueAsString(customerService.checkOwnerForAd(id, data));
     }
 }

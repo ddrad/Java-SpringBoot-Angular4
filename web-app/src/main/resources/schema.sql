@@ -11,7 +11,10 @@ CREATE TABLE ad (
   ,title VARCHAR (100)
   ,description VARCHAR (2000)
   ,image_path VARCHAR (100)
-  ,author int (100)
+  ,author INTEGER
+  ,constraint fk_ads_customer
+    FOREIGN KEY (author)
+    REFERENCES customer (id)
 );
 
 CREATE TABLE product (
@@ -39,5 +42,3 @@ CREATE TABLE token_data (
   ,remove_after_expiration BOOLEAN
   ,status VARCHAR (100)
 );
-
-

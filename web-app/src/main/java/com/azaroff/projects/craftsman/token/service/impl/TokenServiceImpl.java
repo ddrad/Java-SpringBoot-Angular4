@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -61,14 +62,16 @@ public class TokenServiceImpl implements TokenService {
         TokenData tokenData = new TokenData();
         tokenData.setAlias(alias);
         tokenData.setData(data);
-        tokenData.setExpirationTime(dt);
+        tokenData.setExpirationTime(dt.plusMinutes(30));
         tokenData.setStatus(TokenDataStatus.ACTIVE);
         tokenData.setRemoveAfterExpiration(removeAfterExpiration);
         return tokenDataConverter.convertToEntity(tokenData);
     }
 
     private TokenDataEntity updateParamsAndExpirationTime(TokenDataEntity entity, Object data, DateTime dt) {
-        entity.setExpirationTime(dt.toDate());
+        // plus 30 minutes for expired date
+        Date date = dt.plusMinutes(30).toDate();
+        entity.setExpirationTime(date);
         entity.setData(serializer.serialize(data));
         return entity;
     }
@@ -84,7 +87,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.MANDATORY)
+    @Transactional(propagation = Propagation.REQUIRED)
     public TokenData findByAlias(String alias) {
         TokenDataEntity tokenDataEntity = tokenRepository.findByAlias(alias);
         if (tokenDataEntity == null) {
@@ -138,7 +141,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.MANDATORY)
+    @Transactional(propagation = Propagation.REQUIRED)
     public boolean isExpiredTokenData(TokenData tokenData) {
         DateTime expirationTime = tokenData.getExpirationTime();
         return expirationTime.isBeforeNow();

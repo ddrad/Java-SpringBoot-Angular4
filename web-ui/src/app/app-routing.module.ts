@@ -3,11 +3,13 @@ import {RouterModule, Routes} from '@angular/router';
 import {GreetingComponent} from './core/greeting/greeting.component';
 import {ShoppingListComponent} from './shopping-list/shopping-list.component';
 import {ErrorPageComponent} from './error-page/error-page.component';
+import { CustomerInfoComponent } from './confirm-order/customer-info/customer-info.component';
 
 const appRouts: Routes = [
   {path: '', component: GreetingComponent, pathMatch: 'full'},
   {path: 'ads', loadChildren: './ads-catalog/ads-catalog.module#AdsCatalogModule'},
   {path: 'ads-own', loadChildren: './ads-own/ads-own.module#AdsOwnModule'},
+  {path: 'confirm-order', loadChildren: './confirm-order/confirm-order.module#ConfirmOrderModule'},
   {path: 'shopping-list', component: ShoppingListComponent},
   {path: 'page-not-found', component: ErrorPageComponent, data: {message: 'Page not found!'}},
   {path: '**', redirectTo: '/page-not-found'}
