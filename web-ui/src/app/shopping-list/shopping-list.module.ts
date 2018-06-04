@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
-import {AppCommonModule} from 'app/common/app-common.module';
-import {ShoppingListComponent} from 'app/shopping-list/shopping-list.component';
+import { ShoppingListService } from './shopping-list.service';
+import { ShoppingListComponent } from './shopping-list.component';
+import { AppCommonModule } from '../common/app-common.module';
 
 @NgModule({
   declarations: [
@@ -8,6 +9,9 @@ import {ShoppingListComponent} from 'app/shopping-list/shopping-list.component';
   ],
   imports: [
     AppCommonModule,
+  ],
+  providers: [
+    ShoppingListService
   ]
 })
 export class ShoppingListModule {
