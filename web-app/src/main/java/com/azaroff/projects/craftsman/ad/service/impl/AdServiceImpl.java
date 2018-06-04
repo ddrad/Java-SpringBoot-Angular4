@@ -43,15 +43,16 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public Ad saveAd(String tokenAlias, Ad ad) throws DAOException {
-        TokenData tokenData = tokenService.findByAlias(tokenAlias);
-        if (tokenData == null) {
-            throw new DAOException(LoginStatus.FAIL, "Token data was not found");
-        }
-        if (tokenService.isExpiredTokenData(tokenData)) {
-            throw new DAOException(LoginStatus.EXPIRED, "Token was expired");
-        }
-        Customer customer = (Customer)tokenService.deserialize((byte[])tokenData.getData()).getDesirializedObject();
+    public Ad saveAd(String tokenData, Ad ad) throws DAOException {
+//        TokenData tokenData = tokenService.findByAlias(tokenAlias);
+//        if (tokenData == null) {
+//            throw new DAOException(LoginStatus.FAIL, "Token data was not found");
+//        }
+//        if (tokenService.isExpiredTokenData(tokenData)) {
+//            throw new DAOException(LoginStatus.EXPIRED, "Token was expired");
+//        }
+        ;
+        Customer customer = (Customer)tokenService.deserialize(Base64.getDecoder().decode(tokenData)).getDesirializedObject();
         ad.setAuthor(customer.getId());
         AdEntity entity = repository.save(convert.toAdEntity(ad));
         return convert.toAd(entity);
@@ -88,7 +89,6 @@ public class AdServiceImpl implements AdService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public List<Ad> findByAuthor(String tokenAlias, byte[] tokenData) throws DAOException {
-        //TODO: must verify token data
         Customer customer = (Customer) tokenService.deserialize(tokenData).getDesirializedObject();
         Iterable<AdEntity> entities = repository.findByAuthor(customer.getId());
         return StreamSupport.stream(entities.spliterator(), false)

@@ -90,8 +90,12 @@ export class AdService {
   }
 
   fetchAdOwnInfo(tokenAlias: string, data) {
-    console.log('fetchAdOwnInfo: ', data);
-    this.httpClient.post<Ad[]>('http://localhost:4200/app-ads/own', { tokenAlias, data })
+  //  const param = new HttpParams({fromObject: {data}});
+    let header = new HttpHeaders().set('Content-Type', 'application/json')
+      .set('tokenAlias', tokenAlias)
+      .set('tokenData', data);
+
+    this.httpClient.get<Ad[]>('http://localhost:4200/app-ads/own', { headers: header})
       .map(
         (ads) => {
           for (const ad of ads) {
@@ -105,7 +109,7 @@ export class AdService {
       .catch(
         (error: Response) => {
           this.router.navigate(['sign-in']);
-          return Observable.throw('error in getAdsInfo()' + error);
+          return Observable.throw('error in Get Own Info request' + error);
         }
       )
       .subscribe(
@@ -191,19 +195,14 @@ export class AdService {
   }
 
   isCustomerIsOwnerAd(id: number) {
-    console.log('in here');
-    let result = false;
     let tokenAlias = this.getTokenAlias();
     let data = this.getTokenData();
-    return this.httpClient.put<boolean>('http://localhost:4200/app-ads/checkOwner/' + id, { tokenAlias, data })
+    return this.httpClient.put('http://localhost:4200/app-ads/checkOwner/' + id, { tokenAlias, data })
       .catch(
         (error: Response) => {
           return Observable.throw('Can not find ad ' + error);
         }
-      ).map(r => { 
-        result = r; 
-        return result; 
-      });
+      );
   }
 
   private getTokenData() {

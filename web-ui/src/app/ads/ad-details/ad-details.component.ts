@@ -4,6 +4,7 @@ import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { Ad } from '../ad.model';
 import { AdService } from '../ad.service';
 import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-ad-details',
@@ -15,7 +16,7 @@ export class AdDetailsComponent implements OnInit, OnDestroy {
   id: number;
   index: number;
   subscribtion: Subscription;
-  isFromOwnAdsPage: boolean;
+  isShowDropdownMenu: boolean;
 
   constructor(private adService: AdService,
     private route: ActivatedRoute,
@@ -25,17 +26,21 @@ export class AdDetailsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscribtion = this.route.params.subscribe(
       (params: Params) => {
+        // by default must be false, then if customer is owner mange button will be available
+        this.isShowDropdownMenu = false;
         this.id = +params['id'];
         this.index = +params['index'];
         this.ad = this.adService.fetchAdByIndex(this.index);
+
+        if (this.ad) {
+          this.manageAdIsAvailable()
+            .subscribe(r => {
+              this.isShowDropdownMenu = r
+            }
+            );
+        }
       }
     );
-
-    // this.subscribtion = this.adService.adSelectedSbj.subscribe(
-    //   (ad: Ad) => {
-    //     this.ad = ad;
-    //   }
-    // );
   }
 
   onAddToShopingList(index: number) {
@@ -45,19 +50,13 @@ export class AdDetailsComponent implements OnInit, OnDestroy {
     this.adService.addAdToShoppingList(this.ad.products[index]);
   }
 
-  isAuthenticatedAsMaster() {
-    let isOwner = false;
-    let isMaster = this.adService.isAuthenticatedAsMaster();
-    if (isMaster) {
-      this.adService.isCustomerIsOwnerAd(this.ad.id)
-        .subscribe(
-          (r: boolean) => {
-            console.log('in subscribe ', r);
-            isOwner = r
-          }
-        );
+  private manageAdIsAvailable() {
+    if (this.adService.isAuthenticatedAsMaster()) {
+      return this.adService.isCustomerIsOwnerAd(this.id);
     }
-    return isMaster && isOwner ? true : false;
+    else {
+      return Observable.of(false);
+    }
   }
 
   onProductEdit() {

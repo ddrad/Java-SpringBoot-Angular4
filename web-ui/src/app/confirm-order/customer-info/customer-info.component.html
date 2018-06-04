@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+    <form (ngSubmit)="onOrder(f)" #f="ngForm">
+      <div class="form-group">
+        <label for="email">Mail</label>
+        <input type="email" id="email" name="email" ngModel class="form-control" required email #email="ngModel">
+        <span class="help-block" style="color: red;" *ngIf="!email.valid && email.touched">*Please enter your email</span>
+      </div>
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" name="firstName" ngModel class="form-control" required minlength="2" #firstName="ngModel">
+        <span class="help-block" style="color: red;" *ngIf="!firstName.valid && firstName.touched">*Minimal password length must more 2 symbols</span>
+      </div>
+      <div class="form-group">
+        <label for="phoneNumber">First Name</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" ngModel class="form-control" required minlength="9" maxlength="9" #phoneNumber="ngModel">
+        <span class="help-block" style="color: red;" *ngIf="!firstName.valid && firstName.touched">*Minimal password length must more 2 symbols</span>
+      </div>
+      <button class="btn btn-primary" type="submit" [disabled]="!f.valid">Sign Up</button>
+    </form>
+  </div>
+</div>
