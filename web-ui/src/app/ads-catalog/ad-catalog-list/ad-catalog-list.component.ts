@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Ad} from '../../ads/ad.model';
-import {AdService} from '../../ads/ad.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Subscription} from 'rxjs/Subscription';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Ad } from '../../ads/ad.model';
+import { AdService } from '../../ads/ad.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-ad-catalog-list',
@@ -15,8 +15,8 @@ export class AdCatalogListComponent implements OnInit, OnDestroy {
   subscribtion: Subscription;
 
   constructor(private adService: AdService,
-              private router: Router,
-              private route: ActivatedRoute) { }
+    private router: Router,
+    private route: ActivatedRoute) { }
 
   ngOnInit() {
     /*
@@ -37,7 +37,12 @@ export class AdCatalogListComponent implements OnInit, OnDestroy {
   }
 
   onAddNewProduct() {
-    this.router.navigate(['new'], {relativeTo: this.route});
+    if (this.adService.isAuthe+nticatedAsMaster) {
+      this.router.navigate(['new'], { relativeTo: this.route });      
+    }
+    else {
+      this.router.navigate(['sign-in']);
+    }
   }
 
   ngOnDestroy() {
