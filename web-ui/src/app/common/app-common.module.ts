@@ -3,16 +3,19 @@ import {CommonModule} from '@angular/common';
 
 import {DropdownDirectiveDirective} from '../directives/dropdown-directive.directive';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { UploadFileComponent } from './components/upload-file/upload-file.component';
 
 @NgModule({
   declarations: [
-    DropdownDirectiveDirective
+    DropdownDirectiveDirective,
+    UploadFileComponent
   ],
   exports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    DropdownDirectiveDirective
+    DropdownDirectiveDirective,
+    UploadFileComponent
   ]
 })
 export class AppCommonModule {

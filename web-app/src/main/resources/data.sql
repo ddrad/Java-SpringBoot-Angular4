@@ -25,26 +25,26 @@ INSERT INTO authorization_data (email, password, customer_id) VALUES
 INSERT INTO authorization_data (email, password, customer_id) VALUES
   ('customer4@mail.com', '123456', 6);
 
-INSERT INTO ad (title, description, image_path, author)
-VALUES ('Master Of Manicure', 'Test description for Manicure ad with several products', 'https://ladywomans.ru/wp-content/uploads/2017/10/manicure-trendy-3.jpg', 1);
-INSERT INTO ad (title, description, image_path, author)
-VALUES ('Master Of Manicure2', 'Test description for Manicure ad with several products', 'https://ladywomans.ru/wp-content/uploads/2017/10/manicure-trendy-3.jpg', 1);
-INSERT INTO ad (title, description, image_path, author)
-VALUES ('Master Of Manicure3', 'Test description for Manicure ad with several products', 'https://ladywomans.ru/wp-content/uploads/2017/10/manicure-trendy-3.jpg', 1);
-INSERT INTO ad (title, description, image_path, author)
-VALUES ('Master Of Manicure4', 'Test description for Manicure ad with several products', 'https://ladywomans.ru/wp-content/uploads/2017/10/manicure-trendy-3.jpg', 2);
-INSERT INTO ad (title, description, image_path, author)
-VALUES ('Master Of Manicure5', 'Test description for Manicure ad with several products', 'https://ladywomans.ru/wp-content/uploads/2017/10/manicure-trendy-3.jpg', 2);
-
-INSERT INTO product (product_name, cost, ad_id)
-VALUES ('Manicure', 1000, 1);
-INSERT INTO product (product_name, cost, ad_id)
-VALUES ('Manicure', 1000, 2);
-INSERT INTO product (product_name, cost, ad_id)
-VALUES ('Manicure', 1000, 3);
-INSERT INTO product (product_name, cost, ad_id)
-VALUES ('Manicure', 1000, 4);
-INSERT INTO product (product_name, cost, ad_id)
-VALUES ('Manicure', 1000, 5);
+-- INSERT INTO ad (title, description, image_path, author)
+-- VALUES ('Master Of Manicure', 'Test description for Manicure ad with several products', 'https://ladywomans.ru/wp-content/uploads/2017/10/manicure-trendy-3.jpg', 1);
+-- INSERT INTO ad (title, description, image_path, author)
+-- VALUES ('Master Of Manicure2', 'Test description for Manicure ad with several products', 'https://ladywomans.ru/wp-content/uploads/2017/10/manicure-trendy-3.jpg', 1);
+-- INSERT INTO ad (title, description, image_path, author)
+-- VALUES ('Master Of Manicure3', 'Test description for Manicure ad with several products', 'https://ladywomans.ru/wp-content/uploads/2017/10/manicure-trendy-3.jpg', 1);
+-- INSERT INTO ad (title, description, image_path, author)
+-- VALUES ('Master Of Manicure4', 'Test description for Manicure ad with several products', 'https://ladywomans.ru/wp-content/uploads/2017/10/manicure-trendy-3.jpg', 2);
+-- INSERT INTO ad (title, description, image_path, author)
+-- VALUES ('Master Of Manicure5', 'Test description for Manicure ad with several products', 'https://ladywomans.ru/wp-content/uploads/2017/10/manicure-trendy-3.jpg', 2);
+--
+-- INSERT INTO product (product_name, cost, ad_id)
+-- VALUES ('Manicure', 1000, 1);
+-- INSERT INTO product (product_name, cost, ad_id)
+-- VALUES ('Manicure', 1000, 2);
+-- INSERT INTO product (product_name, cost, ad_id)
+-- VALUES ('Manicure', 1000, 3);
+-- INSERT INTO product (product_name, cost, ad_id)
+-- VALUES ('Manicure', 1000, 4);
+-- INSERT INTO product (product_name, cost, ad_id)
+-- VALUES ('Manicure', 1000, 5);
 
 COMMIT;

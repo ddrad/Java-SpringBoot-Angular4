@@ -36,8 +36,7 @@ export class AdDetailsComponent implements OnInit, OnDestroy {
           this.manageAdIsAvailable()
             .subscribe(r => {
               this.isShowDropdownMenu = r
-            }
-            );
+            });
         }
       }
     );

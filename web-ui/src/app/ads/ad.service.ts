@@ -146,9 +146,10 @@ export class AdService {
   }
 
   addNewAd(ad: Ad) {
-    const options = this.httpService.getRequestOptions();
-    const tokenAlias = this.authService.getTokenAlias();
-    return this.httpClient.post<Ad>('http://localhost:4200/app-ads/add', { tokenAlias, ad })
+    let header = new HttpHeaders().set('Content-Type', 'application/json')
+      .set('tokenAlias', this.getTokenAlias())
+      .set('tokenData', this.getTokenData());
+    return this.httpClient.post<Ad>('http://localhost:4200/app-ads/add', { ad }, {headers: header})
       .map(
         (result) => {
           result.index = this.getLengthAdInfo();
@@ -159,9 +160,29 @@ export class AdService {
       )
       .catch(
         (error: Response) => {
-          return Observable.throw('Can not update ad ' + error);
+          return Observable.throw('Can not add new Ad: ' + error);
         }
       );
+  }
+  
+  uploadAdImage(imageFile: FormData) {
+    // let header = new HttpHeaders().set('Content-Type', 'application/json')
+    //   .set('tokenAlias', this.getTokenAlias())
+    //   .set('tokenData', this.getTokenData());
+  
+    console.log(imageFile);
+    return this.httpClient.post<any>('http://localhost:4200/app-ads/uploadAdImage', {imageFile})
+      .map(
+        (result) => {
+         console.log(result);
+          return result;
+        }
+      )
+      .catch(
+        (error: Response) => {
+          return Observable.throw('Can not add new image: ' + error);
+        }
+      )
   }
 
   updateAd(id: number, editedAd: Ad) {

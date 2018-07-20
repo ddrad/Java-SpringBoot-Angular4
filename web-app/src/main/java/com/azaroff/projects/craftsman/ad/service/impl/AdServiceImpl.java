@@ -44,16 +44,9 @@ public class AdServiceImpl implements AdService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Ad saveAd(String tokenData, Ad ad) throws DAOException {
-//        TokenData tokenData = tokenService.findByAlias(tokenAlias);
-//        if (tokenData == null) {
-//            throw new DAOException(LoginStatus.FAIL, "Token data was not found");
-//        }
-//        if (tokenService.isExpiredTokenData(tokenData)) {
-//            throw new DAOException(LoginStatus.EXPIRED, "Token was expired");
-//        }
-        ;
         Customer customer = (Customer)tokenService.deserialize(Base64.getDecoder().decode(tokenData)).getDesirializedObject();
         ad.setAuthor(customer.getId());
+
         AdEntity entity = repository.save(convert.toAdEntity(ad));
         return convert.toAd(entity);
     }

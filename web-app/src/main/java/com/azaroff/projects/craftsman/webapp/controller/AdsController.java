@@ -15,6 +15,7 @@ import exception.TokenIsExpiredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Base64;
 import java.util.List;
@@ -62,18 +63,24 @@ public class AdsController {
         }
     }
 
+    @AppRequaredToken()
     @RequestMapping(value = "/add", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String add(@RequestBody NewAdRequest newAdRequest) {
-        String tokenAlias = newAdRequest.getTokenAlias();
+    public String add(@RequestHeader("tokenAlias") String tokenAlias, @RequestHeader("tokenData") String tokenData,
+                      @RequestBody NewAdRequest newAdRequest) {
         try {
             Ad ad = newAdRequest.getAd();
-            Ad savedAd = adService.saveAd(tokenAlias, ad);
+            Ad savedAd = adService.saveAd(tokenData, ad);
             return new ObjectMapper().writeValueAsString(savedAd);
         } catch (DAOException e) {
             throw new DAOException(e.getStatus(), e.getMessage());
         } catch (JsonProcessingException e) {
             throw new ControllerException(e.getMessage());
         }
+    }
+
+    @RequestMapping(value = "/uploadAdImage", method = RequestMethod.POST)
+    public void handleFileUpload(@RequestParam(value="imageFile") MultipartFile imageFile) {
+        System.out.println(imageFile);
     }
 
     @AppRequaredToken()

@@ -1,9 +1,9 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Params, Router} from '@angular/router';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {AdService} from '../ad.service';
-import {Ad} from '../ad.model';
-import {Subscription} from 'rxjs/Subscription';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { FormArray, FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { AdService } from '../ad.service';
+import { Ad } from '../ad.model';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-ad-edit',
@@ -17,10 +17,11 @@ export class AdEditComponent implements OnInit, OnDestroy {
   editMode = false;
   adForm: FormGroup;
   subscription: Subscription;
+  selectedFiles: FileList;
 
   constructor(private route: ActivatedRoute,
-              private adService: AdService,
-              private router: Router) {
+    private adService: AdService,
+    private router: Router) {
   }
 
   ngOnInit() {
@@ -41,18 +42,10 @@ export class AdEditComponent implements OnInit, OnDestroy {
         }
       }
     );
-
-    // this.subscription = this.adService.adSelectedSbj.subscribe(
-    //   (ad: Ad) => {
-    //     this.ad = ad;
-    //     this.initForm();
-    //   });
   }
 
   onSubmit() {
-    console.log('1');
     if (this.editMode) {
-      console.log('2');
       this.ad.title = this.adForm.value['title'];
       this.ad.imagePath = this.adForm.value['imagePath'];
       this.ad.description = this.adForm.value['description'];
@@ -60,14 +53,10 @@ export class AdEditComponent implements OnInit, OnDestroy {
       this.adService.updateAd(this.id, this.ad);
     }
     else {
-      console.log('3');
-      if (!this.adForm.value['imagePath']) {
-        this.adForm.value['imagePath'] = this.adService.getDefaulImage();
-      }
       this.adService.addNewAd(this.adForm.value)
         .subscribe(
           (ad: Ad) => {
-            this.router.navigate(['/ads-own', ad.id, ad.index], {relativeTo: this.route});
+            this.router.navigate(['/ads-own', ad.id, ad.index], { relativeTo: this.route });
           }
         );
     }
@@ -75,7 +64,7 @@ export class AdEditComponent implements OnInit, OnDestroy {
   }
 
   onCancel() {
-    this.router.navigate(['../'], {relativeTo: this.route});
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
 
   onAddProductToAd() {
@@ -106,7 +95,7 @@ export class AdEditComponent implements OnInit, OnDestroy {
       description = this.ad.description;
 
       if (this.ad['products']) {
-        for (const product of  this.ad.products) {
+        for (const product of this.ad.products) {
           products.push(
             new FormGroup({
               'productName': new FormControl(product.productName, Validators.required),
@@ -125,7 +114,7 @@ export class AdEditComponent implements OnInit, OnDestroy {
       'title': new FormControl(title, Validators.required),
       'imagePath': new FormControl(imagePath),
       'description': new FormControl(description, Validators.required),
-      'products': products
+      'products': products,
     });
   }
 

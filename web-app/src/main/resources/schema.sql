@@ -17,6 +17,17 @@ CREATE TABLE ad (
     REFERENCES customer (id)
 );
 
+CREATE TABLE ad_image (
+  id SERIAL PRIMARY KEY
+  ,name VARCHAR (100)
+  ,type VARCHAR (100)
+  ,img bytea
+  ,ad_id INTEGER
+  ,constraint fk_ads_image
+    FOREIGN KEY (ad_id)
+    REFERENCES ad (id)
+);
+
 CREATE TABLE product (
   id SERIAL PRIMARY KEY
   ,product_name VARCHAR (100)

@@ -2,6 +2,8 @@ package com.azaroff.projects.craftsman.webapp.model;
 
 import com.azaroff.projects.craftsman.ad.service.Ad;
 import com.azaroff.projects.craftsman.webapp.model.permission.BaseRequest;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Copyright DonRiver Inc. All Rights Reserved.
@@ -19,4 +21,5 @@ public class NewAdRequest extends BaseRequest {
     public void setAd(Ad ad) {
         this.ad = ad;
     }
+
 }

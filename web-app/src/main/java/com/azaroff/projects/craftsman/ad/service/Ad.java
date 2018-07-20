@@ -15,6 +15,7 @@ public class Ad {
     private String title;
     private String description;
     private String imagePath;
+    private AdImage imageFile;
     private List<Product> products;
     private int author;
 
@@ -69,6 +70,14 @@ public class Ad {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public AdImage getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(AdImage imageFile) {
+        this.imageFile = imageFile;
     }
 
     @Override

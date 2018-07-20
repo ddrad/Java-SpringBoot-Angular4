@@ -37,7 +37,7 @@ export class AdCatalogListComponent implements OnInit, OnDestroy {
   }
 
   onAddNewProduct() {
-    if (this.adService.isAuthe+nticatedAsMaster) {
+    if (this.adService.isAuthenticatedAsMaster) {
       this.router.navigate(['new'], { relativeTo: this.route });      
     }
     else {
